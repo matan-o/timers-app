@@ -26,8 +26,8 @@ function Tabata(){
                 return (
                     <div>
                         <span> 
-                        <button onClick={()=>prop.set(prop.value ++)}>+</button>
-                        <button onClick={()=>prop.set(prop.value --)}>-</button>
+                        <button onClick={()=>prop.set(prop.value +1)}>+</button>
+                        <button onClick={()=>prop.value != 0 ? prop.set(prop.value -1) : null}>-</button>
                         {prop.name} : {prop.value}
                         </span>
                     </div>
@@ -36,8 +36,7 @@ function Tabata(){
                 
             }
         </div>
-            
-
+        
     )
 
 };
