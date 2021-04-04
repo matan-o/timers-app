@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
 
 function Tabata(){
-
+    // user inputs
     const [prepare, setPrepare] = useState(10)
     const [work, setWork ] = useState(20)
     const [rest, setReset] = useState(10)
     const [cycles, setCycles] = useState(8)
     const [tabatas, setTabatas] = useState(1)
-
     const [active, setActive] = useState(false)
+    // logic states
+    const [totalSeconds, setTotalSeconds] = useState(0)
+    const [onPrepare, setOnPrepare] = useState(false)
     const [onWork, setOnWork] = useState(false)
     const [onRest, setOnRest] = useState(false)
-    const [seconds, setSeconds] = useState()
 
     const userInput = [
         {name: "Prepare", value: prepare, set: setPrepare},
@@ -22,27 +23,41 @@ function Tabata(){
     ]
 
     useEffect(()=>{
+        setTotalSeconds(prepare + ((work + rest) * cycles ) * tabatas)
+    })
+
+    useEffect(()=>{
+        
         let timeout = null
         if(active){
             timeout = setTimeout(() => {
-                console.log("1")
+                timerLogic()
             }, 1000);
         return ()=>{!timeout || clearTimeout(timeout)} 
         }
-    },[active]);
+    },[active, prepare, work, rest, cycles, tabatas, totalSeconds]);
+
+    function timerLogic(){
+        setTotalSeconds(totalSeconds-1)
+    }
+
+    function renderTimer(){
+        let sec = totalSeconds 
+        let m = Math.floor(sec/60)
+        let s = sec-(60*m)
+        let minute = m >= 10 ? m : `0${m}`
+        let second = s >= 10 ? s : `0${s}`
+        return <h2>{minute} : {second}</h2>
+    }
 
     function toggle(){
         setActive(!active)
     };
 
-
-
-  
-    
-
     return(
         <div>
             <h2>Tabata</h2>
+            { renderTimer()}
             {userInput.map((prop, i)=>{
                 return (
                     <div key={i}>
@@ -56,7 +71,7 @@ function Tabata(){
             })
                 
             }
-            <button onClick={toggle}>{active ? 'pause':'run'}</button>
+            <button onClick={toggle}>{active ? 'Pause':'Run'}</button>
         </div>
         
     )
