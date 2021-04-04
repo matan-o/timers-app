@@ -9,7 +9,7 @@ function Tabata(){
     const [tabatas, setTabatas] = useState(1)
     const [active, setActive] = useState(false)
     // logic states
-    const [totalSeconds, setTotalSeconds] = useState(0)
+    const [totalSeconds, setTotalSeconds] = useState(prepare + ((work + rest) * cycles ) * tabatas)
     const [onPrepare, setOnPrepare] = useState(false)
     const [onWork, setOnWork] = useState(false)
     const [onRest, setOnRest] = useState(false)
@@ -21,10 +21,6 @@ function Tabata(){
         {name: "Cycles", value: cycles, set: setCycles},
         {name: "Tabatas", value: tabatas, set: setTabatas},
     ]
-
-    useEffect(()=>{
-        setTotalSeconds(prepare + ((work + rest) * cycles ) * tabatas)
-    })
 
     useEffect(()=>{
         
@@ -54,6 +50,29 @@ function Tabata(){
         setActive(!active)
     };
 
+    function setValues(set, val, operator){
+        set(eval(`${val}${operator}1`))
+        switch(set){
+            case setPrepare:
+                setTotalSeconds(eval(`${totalSeconds}${operator}1`))
+                break;
+            case setWork:
+                setTotalSeconds(eval(`${prepare}+(((${val}${operator}1+${rest})*${cycles}))*${tabatas}`))
+                break;
+            case setReset:
+                setTotalSeconds(eval(`${prepare}+(((${val}${operator}1+${work})*${cycles}))*${tabatas}`))
+                break;
+            case setCycles:
+                setTotalSeconds(eval(`${prepare}+(((${rest}+${work})*(${val}${operator}1)))*${tabatas}`))
+                break;
+            case setTabatas:
+                setTotalSeconds(eval(`${prepare}+(((${rest}+${work})*(${val}${operator}1)))*${cycles}`))
+                break;
+                
+
+        }
+    }
+    
     return(
         <div>
             <h2>Tabata</h2>
@@ -62,8 +81,8 @@ function Tabata(){
                 return (
                     <div key={i}>
                         <span> 
-                        <button disabled={active} onClick={()=>prop.set(prop.value +1)}>+</button>
-                        <button disabled={active} onClick={()=>prop.value !== 0 ? prop.set(prop.value -1) : null}>-</button>
+                        <button disabled={active} onClick={()=>setValues(prop.set, prop.value,'+')}>+</button>
+                        <button disabled={active} onClick={()=>setValues(prop.set, prop.value,'-')}>-</button>
                         {prop.name} : {prop.value}
                         </span>
                     </div>
