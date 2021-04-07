@@ -58,7 +58,7 @@ function Tabata() {
   return (
     <div>
       <h1>אימון מחזורי</h1>
-      <RenderTimer></RenderTimer>
+      <RenderTimer/>
       <Inputs />
       <button onClick={toggle}>{active ? "Pause" : "Run"}</button>
     </div>
