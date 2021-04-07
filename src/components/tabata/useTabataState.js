@@ -38,7 +38,6 @@ export default function useTabataState() {
     } else {
       clearTimerTimeout();
     }
-
     return () => clearTimerTimeout();
   }, [active, totalSeconds]);
 
