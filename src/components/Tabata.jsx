@@ -14,13 +14,21 @@ function Tabata(){
     const [onWork, setOnWork] = useState(false)
     const [onRest, setOnRest] = useState(false)
 
-    const userInput = [
+    const userInputs = [
         {name: "Prepare", value: prepare, set: setPrepare},
         {name: "Work", value: work, set: setWork},
         {name: "Rest", value: rest, set: setReset},
         {name: "Cycles", value: cycles, set: setCycles},
         {name: "Tabatas", value: tabatas, set: setTabatas},
-    ]
+    ];
+    
+    const changeValues = {
+        Prepare: (val) => {return(val + ((work + rest) * cycles ) * tabatas)},
+        Work: (val) =>{return(prepare + ((val + rest) * cycles ) * tabatas)},
+        Rest: (val) =>{return(prepare + ((val + work) * cycles ) * tabatas)},
+        Cycles: (val) => {return(prepare + ((work + rest) * val ) * tabatas)},
+        Tabatas: (val) => {return(prepare + ((work + rest) * cycles ) * val)}
+    };
 
     useEffect(()=>{
         
@@ -35,54 +43,35 @@ function Tabata(){
 
     function timerLogic(){
         setTotalSeconds(totalSeconds-1)
-    }
+    };
 
     function renderTimer(){
-        let sec = totalSeconds 
-        let m = Math.floor(sec/60)
-        let s = sec-(60*m)
-        let minute = m >= 10 ? m : `0${m}`
-        let second = s >= 10 ? s : `0${s}`
-        return <h2>{minute} : {second}</h2>
-    }
+        let m = Math.floor(totalSeconds/60)
+        let s = totalSeconds-(60*m)
+        m = m >= 10 ? m : `0${m}`
+        s = s >= 10 ? s : `0${s}`
+        return <h2>{m} : {s}</h2>
+    };
 
+    function handleOnClick(name, val, set){
+        set(val)
+        setTotalSeconds(changeValues[name](val))
+    };
+    
     function toggle(){
         setActive(!active)
     };
 
-    function setValues(set, val, operator){
-        set(eval(`${val}${operator}1`))
-        switch(set){
-            case setPrepare:
-                setTotalSeconds(eval(`${totalSeconds}${operator}1`))
-                break;
-            case setWork:
-                setTotalSeconds(eval(`${prepare}+(((${val}${operator}1+${rest})*${cycles}))*${tabatas}`))
-                break;
-            case setReset:
-                setTotalSeconds(eval(`${prepare}+(((${val}${operator}1+${work})*${cycles}))*${tabatas}`))
-                break;
-            case setCycles:
-                setTotalSeconds(eval(`${prepare}+(((${rest}+${work})*(${val}${operator}1)))*${tabatas}`))
-                break;
-            case setTabatas:
-                setTotalSeconds(eval(`${prepare}+(((${rest}+${work})*(${val}${operator}1)))*${cycles}`))
-                break;
-                
-
-        }
-    }
-    
     return(
         <div>
             <h2>Tabata</h2>
             { renderTimer()}
-            {userInput.map((prop, i)=>{
+            {userInputs.map((prop, i)=>{
                 return (
                     <div key={i}>
                         <span> 
-                        <button disabled={active} onClick={()=>setValues(prop.set, prop.value,'+')}>+</button>
-                        <button disabled={active} onClick={()=>setValues(prop.set, prop.value,'-')}>-</button>
+                        <button disabled={active} onClick={()=>handleOnClick(prop.name, prop.value+1, prop.set)}>+</button>
+                        <button disabled={active} onClick={()=>handleOnClick(prop.name, prop.value-1, prop.set)}>-</button>
                         {prop.name} : {prop.value}
                         </span>
                     </div>
