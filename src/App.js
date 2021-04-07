@@ -1,5 +1,4 @@
-import Tabata from "./components/Tabata";
-import Timer from "./components/Timer";
+import Tabata from "./components/tabata/Tabata";
 
 
 
