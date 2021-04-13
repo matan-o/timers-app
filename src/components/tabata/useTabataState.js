@@ -3,25 +3,29 @@ import { useEffect, useState } from "react";
 let timeout = null;
 
 export default function useTabataState() {
-  const [prepare, setPrepare] = useState(10);
-  const [work, setWork] = useState(20);
-  const [rest, setReset] = useState(10);
-  const [cycles, setCycles] = useState(8);
+  const [prepare, setPrepare] = useState(2);
+  const [work, setWork] = useState(2);
+  const [rest, setReset] = useState(2);
+  const [cycles, setCycles] = useState(2);
   const [tabatas, setTabatas] = useState(1);
   const [active, setActive] = useState(false);
+
   const [totalSeconds, setTotalSeconds] = useState(
     prepare + (work + rest) * cycles * tabatas
   );
-  const [onPrepare, setOnPrepare] = useState(false);
-  const [onWork, setOnWork] = useState(false);
-  const [onRest, setOnRest] = useState(false);
-
+  const [secondsCalc, setSecondsCalc] = useState(
+    prepare + (work + rest) * cycles * tabatas
+  );
+  const [postPrepare, setPostPrepare] = useState(secondsCalc - prepare)
+  const [currentCycle, setCurrentCycle] = useState(work+rest)
+  const [timerState, setTimerState] = useState("pre");
+  
   const userInputs = [
-    { name: "Prepare", value: prepare, set: setPrepare },
-    { name: "Work", value: work, set: setWork },
-    { name: "Rest", value: rest, set: setReset },
-    { name: "Cycles", value: cycles, set: setCycles },
-    { name: "Tabatas", value: tabatas, set: setTabatas },
+    { name: "Prepare", value: prepare, set: setPrepare, text:"הכנה"},
+    { name: "Work", value: work, set: setWork, text:"פעילות" },
+    { name: "Rest", value: rest, set: setReset, text:"מנוחה" },
+    { name: "Cycles", value: cycles, set: setCycles, text:"מס' מחזורים" },
+    { name: "Tabatas", value: tabatas, set: setTabatas, text:"מס' אימונים" },
   ];
 
   const changeValues = {
@@ -33,27 +37,32 @@ export default function useTabataState() {
   };
 
   useEffect(() => {
-    if (active) {
+    if (active && totalSeconds > 0) {
       timeout = setTimeout(() => timerLogic(), 1000);
     } else {
       clearTimerTimeout();
     }
     return () => clearTimerTimeout();
-  }, [active, totalSeconds]);
+  }, [active, totalSeconds, postPrepare, currentCycle, timerState]);
+
 
   function clearTimerTimeout() {
     !timeout || clearTimeout(timeout);
   }
 
+
   function timerLogic() {
-    if (active) {
+
       setTotalSeconds(totalSeconds - 1);
-    }
+      console.log(totalSeconds)
   }
 
   function handleOnClick(name, val, set) {
     set(val);
     setTotalSeconds(changeValues[name](val));
+    setSecondsCalc(changeValues[name](val))
+    setCurrentCycle(work+rest)
+    setPostPrepare(secondsCalc - prepare)
   }
 
   function toggle() {

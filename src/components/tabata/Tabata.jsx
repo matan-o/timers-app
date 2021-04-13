@@ -1,4 +1,5 @@
 import React from "react";
+import './tabata.css';
 
 import useTabataState from "./useTabataState";
 
@@ -17,15 +18,15 @@ function Tabata() {
     m = m >= 10 ? m : `0${m}`;
     s = s >= 10 ? s : `0${s}`;
     return (
-      <h2>
+      <h1 className="tabataTimer">
         {m} : {s}
-      </h2>
+      </h1>
     );
   }
 
   function Inputs() {
     return (
-      <>
+      <div className="tabataInputs">
         {userInputs.map((prop, i) => {
           return (
             <div key={i}>
@@ -46,21 +47,24 @@ function Tabata() {
                 >
                   -
                 </button>
-                {prop.name} : {prop.value}
+                {prop.text} : {prop.value}
               </span>
             </div>
           );
         })}
-      </>
+      </div>
     );
   }
 
   return (
     <div>
-      <h1>אימון מחזורי</h1>
-      <RenderTimer/>
-      <Inputs/>
-      <button onClick={toggle}>{active ? "Pause" : "Run"}</button>
+      <h1 className="heading">אימון מחזורי</h1>
+      <div className="tabataContainer">
+        <RenderTimer/>
+        <Inputs/>
+        <button className="activeButton" onClick={toggle}>{active ? "Pause" : "Run"}</button>
+      </div>
+      
     </div>
   );
 }
