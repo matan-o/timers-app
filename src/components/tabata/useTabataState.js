@@ -52,9 +52,20 @@ export default function useTabataState() {
 
 
   function timerLogic() {
+      const runningSec = totalSeconds - 1
 
-      setTotalSeconds(totalSeconds - 1);
-      console.log(totalSeconds)
+      setTotalSeconds(runningSec);
+      if(runningSec > postPrepare){
+        setTimerState("prepare")
+      }
+      if(runningSec <= postPrepare){
+        currentCycle - 1 === 0 ? setCurrentCycle(work+rest) : setCurrentCycle(currentCycle-1) 
+      }if(currentCycle > rest){
+        setTimerState("work")
+      }else{
+        setTimerState("rest")
+      }
+      console.log(runningSec, timerState)
   }
 
   function handleOnClick(name, val, set) {
